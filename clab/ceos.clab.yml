@@ -1,0 +1,12 @@
+name: "ceos"
+
+topology:
+  nodes:
+    eos01:
+      kind: "ceos"
+      image: "ceos:4.31.1F"
+    eos02:
+      kind: "ceos"
+      image: "ceos:4.31.1F"
+  links:
+    - endpoints: ["eos01:eth1", "eos02:eth1"]
