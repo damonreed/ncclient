@@ -5,8 +5,41 @@ import xmltodict
 import json
 from ncclient import manager
 
+
+# get_all : get all state data from device
+def get_state(device):
+    # Establishing a NETCONF session
+    with manager.connect(**device) as m:
+        print("Connected to the device")
+        state = m.get()
+        state_dict = xmltodict.parse(state.xml)
+        return state_dict
+
+
+def get_config(device):
+    # Establishing a NETCONF session
+    with manager.connect(**device) as m:
+        print("Connected to the device")
+        config = m.get_config(source="running")
+        config_dict = xmltodict.parse(config.xml)
+        return config_dict
+
+
+## Recursively print all keys in a dictionary, represent MIB-style =P
+def print_keys(d, p=""):
+    for k, v in d.items():
+        if isinstance(v, dict):
+            print(p + k)
+            p += k + "."
+            print_keys(v, p)
+            p = ""
+        else:
+            print(p + k + " : " + str(v))
+            p = ""
+
+
 device = {
-    "host": "clab-ceos-eos01",
+    "host": "172.20.20.3",
     "port": 830,  # Default Netconf port
     "username": "admin",
     "password": "admin",
@@ -16,11 +49,11 @@ device = {
     "look_for_keys": False,
 }
 
-# Establishing a NETCONF session
-with manager.connect(**device) as m:
-    print("Connected to the device")
-    config = m.get_config(source="running")
-    # print(config.xml)
-    config_dict = xmltodict.parse(config.xml)
-    # print(config_dict)
-    print(json.dumps(config_dict, indent=2))
+
+state = get_state(device)["rpc-reply"]["data"]
+
+# print(json.dumps(state, indent=2))
+print_keys(state)
+
+
+# print(get_config(device))
