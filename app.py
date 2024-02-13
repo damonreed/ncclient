@@ -1,5 +1,5 @@
 #
-# ncclient
+# netswarm app.py
 #
 import xmltodict
 import json
@@ -49,11 +49,10 @@ device = {
     "look_for_keys": False,
 }
 
+state = get_state(device)["rpc-reply"]["data"]["network-instances"]["network-instance"]
 
-state = get_state(device)["rpc-reply"]["data"]
+# print(state.keys())
+# print_keys(state)
+print(json.dumps(state, indent=2))
 
-# print(json.dumps(state, indent=2))
-print_keys(state)
-
-
-# print(get_config(device))
+# print_keys(get_config(device))
